@@ -23,7 +23,7 @@ export class RoomController {
         return res.status(400).json({ error: 'Max participants must be between 2 and 100' });
       }
 
-      let hashedPassword = null;
+      let hashedPassword: string | undefined;
       if (password) {
         hashedPassword = await bcrypt.hash(password, 10);
       }
@@ -42,10 +42,10 @@ export class RoomController {
       // Увеличиваем счетчик созданных комнат
       await UserModel.incrementStat(req.user.userId, 'rooms_created');
 
-      res.status(201).json(room);
+      return res.status(201).json(room);
     } catch (error) {
       console.error('Create room error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -54,10 +54,10 @@ export class RoomController {
     try {
       const limit = parseInt(req.query.limit as string) || 20;
       const rooms = await RoomModel.findPublicRooms(limit);
-      res.json(rooms);
+      return res.json(rooms);
     } catch (error) {
       console.error('Get rooms error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -74,14 +74,14 @@ export class RoomController {
       const participants = await RoomModel.getParticipants(roomId);
       const participantCount = participants.length;
 
-      res.json({
+      return res.json({
         ...room,
         participants,
         participant_count: participantCount,
       });
     } catch (error) {
       console.error('Get room error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -120,10 +120,10 @@ export class RoomController {
       await RoomModel.addParticipant(roomId, req.user.userId);
       await UserModel.incrementStat(req.user.userId, 'rooms_joined');
 
-      res.json({ success: true, message: 'Joined room successfully' });
+      return res.json({ success: true, message: 'Joined room successfully' });
     } catch (error) {
       console.error('Join room error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -137,10 +137,10 @@ export class RoomController {
       const { roomId } = req.params;
       await RoomModel.removeParticipant(roomId, req.user.userId);
 
-      res.json({ success: true, message: 'Left room successfully' });
+      return res.json({ success: true, message: 'Left room successfully' });
     } catch (error) {
       console.error('Leave room error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -151,10 +151,10 @@ export class RoomController {
       const limit = parseInt(req.query.limit as string) || 50;
 
       const messages = await MessageModel.getRecentMessages(roomId, limit);
-      res.json(messages);
+      return res.json(messages);
     } catch (error) {
       console.error('Get messages error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 }
