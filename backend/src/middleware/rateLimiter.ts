@@ -11,7 +11,8 @@ export const apiLimiter = rateLimit({
   legacyHeaders: false,
   // Используем Redis для кластерных деплоев
   store: new RedisStore({
-    client: redisClient,
+    // Исправление для rate-limit-redis v4+: используем sendCommand вместо client
+    sendCommand: (...args: string[]) => redisClient.sendCommand(args),
     prefix: 'rl:api:',
   }),
 });
@@ -24,7 +25,7 @@ export const createRoomLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   store: new RedisStore({
-    client: redisClient,
+    sendCommand: (...args: string[]) => redisClient.sendCommand(args),
     prefix: 'rl:create:',
   }),
 });
@@ -36,7 +37,7 @@ export const messageLimiter = rateLimit({
   message: 'Too many messages, please slow down.',
   skipSuccessfulRequests: false,
   store: new RedisStore({
-    client: redisClient,
+    sendCommand: (...args: string[]) => redisClient.sendCommand(args),
     prefix: 'rl:msg:',
   }),
 });
