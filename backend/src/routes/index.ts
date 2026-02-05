@@ -20,8 +20,8 @@ router.post('/rooms/:roomId/leave', authenticateToken, RoomController.leaveRoom)
 router.get('/rooms/:roomId/messages', RoomController.getRoomMessages);
 
 // Health check
-router.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+router.get('/health', (_req, res) => {
+  return res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 export default router;
