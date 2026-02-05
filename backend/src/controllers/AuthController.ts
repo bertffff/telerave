@@ -41,7 +41,7 @@ export class AuthController {
         telegramId: user.telegram_id,
       });
 
-      res.json({
+      return res.json({
         token,
         user: {
           id: user.id,
@@ -54,7 +54,7 @@ export class AuthController {
       });
     } catch (error) {
       console.error('Auth error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -71,7 +71,7 @@ export class AuthController {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      res.json({
+      return res.json({
         id: user.id,
         telegram_id: user.telegram_id,
         username: user.username,
@@ -83,7 +83,7 @@ export class AuthController {
       });
     } catch (error) {
       console.error('Get user error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -95,10 +95,10 @@ export class AuthController {
       }
 
       const stats = await UserModel.getStats(req.user.userId);
-      res.json(stats);
+      return res.json(stats);
     } catch (error) {
       console.error('Get stats error:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 }
