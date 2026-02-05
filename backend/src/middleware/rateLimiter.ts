@@ -11,7 +11,6 @@ export const apiLimiter = rateLimit({
   legacyHeaders: false,
   // Используем Redis для кластерных деплоев
   store: new RedisStore({
-    // @ts-expect-error - проблема с типами в библиотеке
     client: redisClient,
     prefix: 'rl:api:',
   }),
@@ -25,7 +24,6 @@ export const createRoomLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   store: new RedisStore({
-    // @ts-expect-error - проблема с типами в библиотеке
     client: redisClient,
     prefix: 'rl:create:',
   }),
@@ -38,7 +36,6 @@ export const messageLimiter = rateLimit({
   message: 'Too many messages, please slow down.',
   skipSuccessfulRequests: false,
   store: new RedisStore({
-    // @ts-expect-error - проблема с типами в библиотеке
     client: redisClient,
     prefix: 'rl:msg:',
   }),
