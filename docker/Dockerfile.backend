@@ -3,18 +3,23 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --omit=dev
+# Устанавливаем ВСЕ зависимости, чтобы был доступен tsc
+RUN npm install
 
 COPY . .
 RUN npm run build
 
-FROM node:20-alpine
+# Новый этап для очистки зависимостей перед копированием в финал
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
+# Устанавливаем только prod-зависимости для уменьшения веса образа
+RUN npm install --omit=dev
+
+# Копируем только скомпилированные файлы из первого этапа
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./
 
 EXPOSE 3000
 
